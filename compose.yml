@@ -8,7 +8,11 @@ networks:
   mattermost-private:
 
 volumes:
-  mattermost:
+  mattermost_config:
+  mattermost_data:
+  mattermost_logs:
+  mattermost_plugins:
+  mattermost_client_plugins:
   mattermost-db:
 
 secrets:
@@ -33,7 +37,7 @@ services:
         - traefik.frontend.rule=$MATTERMOST_ROUTING_LABEL
         - traefik.frontend.priority=$MATTERMOST_ROUTING_LABEL_PRIORITY
         # You'll need to set applicaiton's port here.
-        - traefik.port=SET_ME_PLEASE
+        - traefik.port=8000
         - ${TRAEFIK_BASIC_AUTH}
         - traefik.enable=true
         - traefik.tags=ingress 
@@ -61,6 +65,13 @@ services:
       # Othertimes you can use http:// or https:// for the website. Weird trick.
       #- MQTT_USER=${mattermost}
       - ADMIN_USER=${ADMIN_USER}
+      # set same as db credentials and dbname
+      - MM_USERNAME=mattermost
+      - MM_PASSWORD={{"{{DOCKER-SECRET:mattermost_db_password}}"}}
+      - MM_DBNAME=mattermost
+      # use the credentials you've set above, in the format:
+      # MM_SQLSETTINGS_DATASOURCE=postgres://${MM_USERNAME}:${MM_PASSWORD}@db:5432/${MM_DBNAME}?sslmode=disable&connect_timeout=10
+      - MM_SQLSETTINGS_DATASOURCE=postgres://mattermost:{{"{{DOCKER-SECRET:mattermost_password}}"}}@mattermost_db:5432/mattermost?sslmode=disable&connect_timeout=10
     image: ${image_provider:-scififarms}/technocore-mattermost:${TAG:-latest}
     logging:
       driver: "${LOGGING_DRIVER}"
@@ -73,8 +84,12 @@ services:
       - source: mattermost_mattermost_db_password
         target: mattermost_db_password
     volumes:
-      # Likely need to change this
-      - mattermost:/var/lib/mattermost
+      - mattermost_config:/mattermost/config:rw
+      - mattermost_data:/mattermost/data:rw
+      - mattermost_logs:/mattermost/logs:rw
+      - mattermost_plugins:/mattermost/plugins:rw
+      - mattermost_client_plugins:/mattermost/client/plugins:rw
+      - /etc/localtime:/etc/localtime:ro
       - ${DEV_MOUNT_MATTERMOST_SHELL_MIGRATIONS:-$EMPTY_MOUNT}
 
   mattermost_db:
@@ -84,7 +99,10 @@ services:
       mode: global
       restart_policy:
         condition: any
-    #environment:
+    environment:
+      - POSTGRES_USER=mattermost
+      - POSTGRES_PASSWORD={{"{{DOCKER-SECRET:mattermost_password}}"}}
+      - POSTGRES_DB=mattermost
     image: ${image_provider:-scififarms}/technocore-mattermost-db:${TAG:-latest}
     logging:
       driver: "${LOGGING_DRIVER}"
@@ -98,5 +116,5 @@ services:
       - source: mattermost_db_mattermost_password
         target: mattermost_password
     volumes:
-      # Likely need to change this
-      - mattermost-db:/var/lib/mattermost
+      - mattermost-db:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
