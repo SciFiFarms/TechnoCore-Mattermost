@@ -18,29 +18,31 @@ secrets:
   mattermost_mattermost_db_password:
     name: ${STACK_NAME:-technocore}_mattermost_mattermost_db_password
     external: true
+  mattermost_db_mattermost_password:
+    name: ${STACK_NAME:-technocore}_mattermost_db_mattermost_password
+    external: true
 
 services:
-  ## Uncomment this if Traefik will be used for routing traffick to this service.
-  #ingress:
-  #  networks:
-  #    - mattermost
+  ingress:
+    networks:
+      - mattermost
 
   mattermost:
     deploy:
       labels:
-      #  - traefik.frontend.rule=$MATTERMOST_ROUTING_LABEL
-      #  - traefik.frontend.priority=$MATTERMOST_ROUTING_LABEL_PRIORITY
-      #  # You'll need to set applicaiton's port here.
-      #  - traefik.port=SET_ME_PLEASE
-      #  - ${TRAEFIK_BASIC_AUTH}
-      #  - traefik.enable=true
-      #  - traefik.tags=ingress 
-      #  - traefik.docker.network=${STACK_NAME:-technocore}_mattermost
-      #  # Traefik service that listens to HTTP
-      #  - traefik.redirectorservice.frontend.entryPoints=http
-      #  - traefik.redirectorservice.frontend.redirect.entryPoint=https
-      #  # Traefik service that listens to HTTPS
-      #  - traefik.webservice.frontend.entryPoints=https
+        - traefik.frontend.rule=$MATTERMOST_ROUTING_LABEL
+        - traefik.frontend.priority=$MATTERMOST_ROUTING_LABEL_PRIORITY
+        # You'll need to set applicaiton's port here.
+        - traefik.port=SET_ME_PLEASE
+        - ${TRAEFIK_BASIC_AUTH}
+        - traefik.enable=true
+        - traefik.tags=ingress 
+        - traefik.docker.network=${STACK_NAME:-technocore}_mattermost
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
         - com.ouroboros.enable=true
       mode: global
       restart_policy:
@@ -49,11 +51,11 @@ services:
         constraints:
           - node.role == manager
       # Big services will need this modified or removed.
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
+      #resources:
+      #  limits:
+      #    memory: 128M
+      #  reservations:
+      #    memory: 64M
     environment:
       # Sometimes you have to pass in ${DOMAIN} to enable the correct link paths to be generated.
       # Othertimes you can use http:// or https:// for the website. Weird trick.
@@ -67,9 +69,9 @@ services:
     networks:
       - mattermost
       - mattermost-private
-    #secrets:
-    #  - source: mattermost_mattermost_db_password
-    #    target: mattermost_db_password
+    secrets:
+      - source: mattermost_mattermost_db_password
+        target: mattermost_db_password
     volumes:
       # Likely need to change this
       - mattermost:/var/lib/mattermost
