@@ -37,3 +37,4 @@ set_service_flag $service_name
 #set_optional_service home-assistant
 #set_optional_service mqtt
 #set_optional_service syncthing
+set_optional_service smtp_relay
