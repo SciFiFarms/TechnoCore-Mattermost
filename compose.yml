@@ -37,7 +37,7 @@ services:
         - traefik.frontend.rule=$MATTERMOST_ROUTING_LABEL
         - traefik.frontend.priority=$MATTERMOST_ROUTING_LABEL_PRIORITY
         # You'll need to set applicaiton's port here.
-        - traefik.port=8000
+        - traefik.port=8065
         - ${TRAEFIK_BASIC_AUTH}
         - traefik.enable=true
         - traefik.tags=ingress 
@@ -71,9 +71,7 @@ services:
       - MM_USERNAME=mattermost
       - MM_PASSWORD={{"{{DOCKER-SECRET:mattermost_db_password}}"}}
       - MM_DBNAME=mattermost
-      # use the credentials you've set above, in the format:
-      # MM_SQLSETTINGS_DATASOURCE=postgres://${MM_USERNAME}:${MM_PASSWORD}@db:5432/${MM_DBNAME}?sslmode=disable&connect_timeout=10
-      - MM_SQLSETTINGS_DATASOURCE=postgres://mattermost:{{"{{DOCKER-SECRET:mattermost_password}}"}}@mattermost_db:5432/mattermost?sslmode=disable&connect_timeout=10
+      - "MM_SERVICESETTINGS_SITEURL=https://mattermost.${DOMAIN}"
     image: ${image_provider:-scififarms}/technocore-mattermost:${TAG:-latest}
     logging:
       driver: "${LOGGING_DRIVER}"
