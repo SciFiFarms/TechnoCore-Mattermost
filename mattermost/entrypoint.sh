@@ -44,8 +44,10 @@ env_secrets_expand() {
     fi
 }
 env_secrets_expand
-dogfish migrate &
+#dogfish migrate &
 
 # Add any additional script here. 
+export "MM_SQLSETTINGS_DATASOURCE=postgres://mattermost:${MM_PASSWORD}@mattermost_db:5432/mattermost?sslmode=disable&connect_timeout=10"
+export "MM_SQLSETTINGS_DRIVERNAME=postgres"
 
 exec "$@"
