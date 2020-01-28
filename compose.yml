@@ -64,8 +64,10 @@ services:
       # Sometimes you have to pass in ${DOMAIN} to enable the correct link paths to be generated.
       # Othertimes you can use http:// or https:// for the website. Weird trick.
       #- MQTT_USER=${mattermost}
-      - ADMIN_USER=${ADMIN_USER}
+      #- ADMIN_USER=${ADMIN_USER}
       # set same as db credentials and dbname
+      - DB_HOST=mattermost_db
+      - DB_PORT_NUMBER=5432
       - MM_USERNAME=mattermost
       - MM_PASSWORD={{"{{DOCKER-SECRET:mattermost_db_password}}"}}
       - MM_DBNAME=mattermost
@@ -111,8 +113,6 @@ services:
     networks:
       - mattermost-private
     secrets:
-      - source: mattermost_db_admin_password
-        target: admin_password
       - source: mattermost_db_mattermost_password
         target: mattermost_password
     volumes:
