@@ -6,7 +6,7 @@
 #      not get included in the compose file, but still gets printed. 
 
 # compose.sh defaults $service_name to the service's directory name. It can be overridden here. 
-service_name=chat
+#service_name=
 
 # Leave blank to disable this service by default.
 set_service_flag $service_name
@@ -16,7 +16,7 @@ set_service_flag $service_name
 # Results in one of the following paths: 
 # https://some.domain/prefix/
 # https://prefix.some.domain/
-# prefix=$service_name
+prefix=chat
 
 # This is how to optionally include additional .yml files. See the prometheus repo 
 # for a complete example.
