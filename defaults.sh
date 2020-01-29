@@ -6,7 +6,7 @@
 #      not get included in the compose file, but still gets printed. 
 
 # compose.sh defaults $service_name to the service's directory name. It can be overridden here. 
-# service_name=
+ service_name=chat
 
 # Leave blank to disable this service by default.
 set_service_flag $service_name

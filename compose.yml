@@ -38,7 +38,7 @@ services:
         - traefik.frontend.priority=$MATTERMOST_ROUTING_LABEL_PRIORITY
         # You'll need to set applicaiton's port here.
         - traefik.port=8065
-        - ${TRAEFIK_BASIC_AUTH}
+        #- ${TRAEFIK_BASIC_AUTH}
         - traefik.enable=true
         - traefik.tags=ingress 
         - traefik.docker.network=${STACK_NAME:-technocore}_mattermost
