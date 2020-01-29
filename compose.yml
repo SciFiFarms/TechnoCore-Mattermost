@@ -71,7 +71,7 @@ services:
       - MM_USERNAME=mattermost
       - MM_PASSWORD={{"{{DOCKER-SECRET:mattermost_db_password}}"}}
       - MM_DBNAME=mattermost
-      - "MM_SERVICESETTINGS_SITEURL=https://mattermost.${DOMAIN}"
+      - "MM_SERVICESETTINGS_SITEURL=https://chat.${DOMAIN}"
       - MM_SERVICESETTINGS_ENABLECUSTOMEMOJI=true
       - MM_SERVICESETTINGS_ENABLEEMAILINVITATIONS=true
       - MM_SERVICESETTINGS_ENABLEGIF_PICKER=true
